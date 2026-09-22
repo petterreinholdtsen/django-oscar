@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+
+case "$1" in
+    remove)
+        systemctl stop django-oscar.service 2>/dev/null || true
+        ;;
+
+    purge)
+        rm -rf /var/lib/django-oscar
+        rm -rf /var/run/django-oscar
+        rm -f /etc/django-oscar/uwsgi.ini
+        rm -f /etc/django-oscar/environment.conf
+        rmdir /etc/django-oscar 2>/dev/null || true
+        ;;
+
+    abort-upgrade|failed-upgrade|resized|disappear)
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0

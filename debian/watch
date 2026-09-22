@@ -1,0 +1,3 @@
+version=3
+opts=uversionmangle=s/(^[^c]*)c$/$1/ \
+    https://pypi.debian.net/django-oscar django.oscar/[dD]jango[-_]oscar-(\d\S*)\.tar\.gz

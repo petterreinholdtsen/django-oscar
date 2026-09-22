@@ -1,0 +1,13 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: django-oscar
+Upstream-Contact: michael@tangentlabs.com
+Source: https://django-oscar.readthedocs.io/
+ Source: https://github.com/django-oscar/django-oscar.git
+
+Files: *
+Copyright: 2011-present Tangent Communications PLC and individual contributors
+License: BSD-3-Clause
+
+Files: debian/*
+Copyright: 2025 Pere <pere@example.com>
+License: GPL-2+

@@ -1,0 +1,58 @@
+Source: django-oscar
+Section: python
+Priority: optional
+Maintainer: David Winterbottom <david.winterbottom@gmail.com>
+Build-Depends: debhelper-compat (= 13),
+ dh-python,
+ python3-all,
+ python3-setuptools (>= 62.4.0)
+Standards-Version: 4.6.2
+Rules-Requires-Root: no
+Homepage: https://django-oscar.readthedocs.io/
+Vcs-Git: https://github.com/django-oscar/django-oscar.git
+Vcs-Browser: https://github.com/django-oscar/django-oscar
+
+Package: python3-oscar
+Architecture: all
+Depends: ${python3:Depends},
+ ${misc:Depends},
+ python3-django (>= 4.2),
+ python3-pillow (>= 6.0),
+ python3-babel,
+ python3-phonenumbers,
+ python3-click
+Description: A domain-driven e-commerce framework for Django
+ Django Oscar is an open-source eCommerce framework written in Python using the
+ Django web framework. Unlike other eCommerce systems, it doesn't try to be a
+ turnkey solution but rather provides building blocks for constructing flexible
+ and scalable eCommerce sites.
+
+Package: django-oscar-service
+Architecture: all
+Depends: python3-oscar,
+ ${misc:Depends},
+ uwsgi-plugin-python3,
+ fonts-open-sans,
+ python3-psycopg2 | python3-mysqldb,
+ python3-django-extra-views (>= 0.13),
+ python3-django-haystack (>= 3.0b1),
+ python3-django-treebeard (>= 4.7.0),
+ python3-purl (>= 0.7),
+ python3-django-phonenumber-field (>= 4.0.0),
+ python3-factory-boy (>= 3.3.1),
+ python3-django-tables2 (>= 2.3),
+ python3-django-widget-tweaks (>= 1.4.1),
+ python3-sorl-thumbnail (>= 12.10.0),
+ python3-django-environ,
+ python3-whitenoise (>= 6.7.0)
+Description: Django Oscar service infrastructure for server deployment
+  This package provides systemd and uWSGI configuration templates for running a
+  Django Oscar-based e-commerce site as a system service.
+ .
+ It installs:
+  - A systemd unit file at /lib/systemd/system/django-oscar.service
+  - A uwsgi.ini template at /etc/django-oscar/uwsgi.ini
+  - An environment.conf template at /etc/django-oscar/environment.conf
+ .
+ You still need to create your own Django project using django-admin startproject
+ and configure it to use Oscar. See README.Debian for setup instructions.

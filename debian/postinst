@@ -1,0 +1,109 @@
+#!/bin/bash
+set -e
+
+case "$1" in
+    install)
+        # Create required directories
+        mkdir -p /var/lib/django-oscar/project
+        mkdir -p /var/lib/django-oscar/media
+        mkdir -p /var/lib/django-oscar/static
+        mkdir -p /var/run/django-oscar
+
+        # Set ownership
+        chown www-data:www-data /var/lib/django-oscar -R 2>/dev/null || true
+        chown www-data:www-data /var/run/django-oscar 2>/dev/null || true
+
+        # Write uwsgi.ini if not already present (e.g., on upgrade)
+        if [ ! -f /etc/django-oscar/uwsgi.ini ]; then
+            cat > /etc/django-oscar/uwsgi.ini << 'UWSGIEOF'
+[uwsgi]
+processes = 2
+threads = 10
+
+http = :8080
+http-auto-chunked = true
+http-keepalive = 75
+http-timeout = 75
+
+log-x-forwarded-for = true
+
+die-on-term = 1
+vacuum = 1
+master = true
+enable-threads = true
+lazy = 1
+thunder-lock = 1
+buffer-size = 65535
+no-defer-accept = 1
+
+pythonpath = /var/lib/django-oscar/project
+module = wsgi:application
+
+harakiri = 30
+harakiri-verbose = true
+
+static-map = /media=/var/lib/django-oscar/media/
+static-map = /static=/var/lib/django-oscar/static/
+
+route-if = contains:${HTTP_ACCEPT_ENCODING};gzip goto:_gzip
+route-run = last:
+
+route-label = _gzip
+route-run = gzip:
+route-run = chunked:
+route-run = last:
+UWSGIEOF
+        fi
+
+        # Write environment.conf if not already present
+        if [ ! -f /etc/django-oscar/environment.conf ]; then
+            cat > /etc/django-oscar/environment.conf << 'ENVEOF'
+DJANGO_SETTINGS_MODULE=settings
+DEBUG=false
+ALLOWED_HOSTS=localhost,127.0.0.1
+# DATABASE_ENGINE=django.db.backends.postgresql
+# DATABASE_NAME=oscar
+# DATABASE_USER=oscar
+# DATABASE_PASSWORD=change-me
+# DATABASE_HOST=/var/run/postgresql
+# DATABASE_PORT=5432
+ENVEOF
+        fi
+
+        # Generate a random secret key if not set
+        if ! grep -q "^SECRET_KEY=" /etc/django-oscar/environment.conf; then
+            SECRET_KEY=$(python3 -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())")
+            echo "SECRET_KEY=$SECRET_KEY" >> /etc/django-oscar/environment.conf
+        fi
+
+        echo ""
+        echo "Django Oscar service infrastructure installed."
+        echo ""
+        echo "To complete setup, create your Django project:"
+        echo "  cd /var/lib/django-oscar/"
+        echo "  django-admin startproject myshop project/"
+        echo ""
+        echo "Then edit project/settings.py to add Oscar apps and configure"
+        echo "the database in /etc/django-oscar/environment.conf."
+        echo ""
+        ;;
+
+    upgrade)
+        # Run migrations on upgrade if project exists
+        if [ -f /var/lib/django-oscar/project/manage.py ]; then
+            cd /var/lib/django-oscar/project
+            python3 manage.py migrate --noinput 2>/dev/null || true
+            python3 manage.py collectstatic --noinput 2>/dev/null || true
+        fi
+
+        # Reload service if running
+        systemctl try-reload django-oscar.service 2>/dev/null || true
+        ;;
+
+    abort-upgrade)
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0

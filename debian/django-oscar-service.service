@@ -1,0 +1,18 @@
+[Unit]
+Description=Django Oscar application (uWSGI)
+After=network.target
+
+[Service]
+Type=forking
+User=www-data
+Group=www-data
+WorkingDirectory=/var/lib/django-oscar/project
+EnvironmentFile=/etc/django-oscar/environment.conf
+ExecStartPre=/usr/bin/python3 /var/lib/django-oscar/project/manage.py migrate --noinput
+ExecStart=/usr/bin/uwsgi --ini /etc/django-oscar/uwsgi.ini
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

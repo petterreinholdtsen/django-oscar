@@ -1,0 +1,60 @@
+Django Oscar Debian Package
+===========================
+
+Two packages are provided:
+
+  python3-oscar        The framework library (for development)
+  django-oscar-service Service infrastructure for running a site on a server
+
+Getting started with django-oscar-service
+------------------------------------------
+
+1. Install the package and create your Django project:
+
+   apt install django-oscar-service
+   cd /var/lib/django-oscar/
+   sudo -u www-data django-admin startproject myshop project/
+
+2. Edit /var/lib/django-oscar/project/settings.py:
+
+   Add Oscar's INSTALLED_APPS (see python3-oscar package docs), configure
+   the database, set STATIC_ROOT='/var/lib/django-oscar/static/', and
+   MEDIA_ROOT='/var/lib/django-oscar/media/'.
+
+3. Configure the runtime environment in /etc/django-oscar/environment.conf:
+
+   - SECRET_KEY is auto-generated on install
+   - ALLOWED_HOSTS should list your domain(s)
+   - Set DATABASE_* variables for PostgreSQL/MySQL if not using SQLite
+
+4. Edit /etc/django-oscar/uwsgi.ini:
+
+   Adjust the listening port (default 8080), process/thread count, and
+   any path overrides needed for your project layout.
+
+5. Enable and start the service:
+
+   systemctl enable --now django-oscar.service
+
+The service will auto-run migrations on each restart via ExecStartPre.
+
+Adding products
+---------------
+
+Products are managed through the admin dashboard at /admin/ or imported
+from CSV files using the oscar_import_catalogue management command.
+
+Thumbnail backend
+-----------------
+
+This package uses sorl-thumbnail (python3-sorl-thumbnail). The
+easy-thumbnails alternative is not available in Debian.
+
+Directory structure
+-------------------
+
+/etc/django-oscar/                      Configuration files
+/var/lib/django-oscar/project/         Your Django project directory
+/var/lib/django-oscar/media/           Uploaded media files
+/var/lib/django-oscar/static/          Collected static files
+/var/run/django-oscar/                 Runtime directory (sockets)

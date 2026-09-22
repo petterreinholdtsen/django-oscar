@@ -1,0 +1,40 @@
+Building from upstream source
+==============================
+
+This package must be built from the official PyPI source tarball, not directly
+from a git checkout. The upstream "make package" target builds JavaScript/CSS
+assets via npm before creating the sdist. These pre-built assets live in
+src/oscar/static/ and are included in the distribution tarball via MANIFEST.in.
+
+A raw git checkout will have an empty src/oscar/static/ directory, causing
+the admin dashboard to be missing styles and interactive features.
+
+Downloading upstream releases
+------------------------------
+
+Use uscan (from devscripts) to check for new releases:
+
+    uscan --no-download          # just check what's available
+    uscan                        # download the latest release automatically
+
+Or manually fetch a specific version from pypi.debian.net:
+
+    wget https://pypi.debian.net/django-oscar/django_oscar-4.2.tar.gz \
+         -O django-oscar_4.2.orig.tar.gz
+
+Building the package
+---------------------
+
+    dpkg-source -x django-oscar_*.dsc
+    cd django-oscar-*/
+    dpkg-buildpackage -us -uc
+
+No npm or nodejs is required at build time — all assets are pre-built in
+the upstream tarball. Two quilt patches are applied:
+
+  debian/patches/1001-use-local-jquery.patch
+    Replaces the Google CDN jQuery reference with the bundled local copy,
+    eliminating an external network dependency and a lintian error.
+
+  debian/patches/2001-remove-npm-build.patch
+    Removes the BuildNPM class from setup.py which would otherwise try to run npm.
