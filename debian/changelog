@@ -2,9 +2,12 @@ django-oscar (4.2.0-1) unstable; urgency=low
 
   * Initial Debian release.
     - python3-oscar: Django Oscar e-commerce framework library
-    - django-oscar-sandbox: demo site running as systemd service via uWsgi
-    - All Python dependencies satisfied by existing Debian packages (no pip/venv)
+    - django-oscar-sandbox: demo site running as systemd service via
+      uWsgi
+    - All Python dependencies satisfied by existing Debian packages
+      (no pip/venv)
     - Static assets pre-built upstream, no npm needed at build time
-    - Uses sorl-thumbnail for image thumbnails (easy-thumbnails not packaged in Debian)
+    - Uses sorl-thumbnail for image thumbnails (easy-thumbnails not
+      packaged in Debian)
 
- -- David Winterbottom <david.winterbottom@gmail.com>  Mon, 24 Aug 2026 00:00:00 +0000
+ -- Petter Reinholdtsen <pere@debian.org>  Mon, 24 Aug 2026 00:00:00 +0000

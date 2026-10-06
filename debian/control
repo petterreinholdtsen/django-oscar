@@ -1,7 +1,7 @@
 Source: django-oscar
 Section: python
 Priority: optional
-Maintainer: David Winterbottom <david.winterbottom@gmail.com>
+Maintainer: Petter Reinholdtsen <pere@debian.org>
 Build-Depends: debhelper-compat (= 13),
  dh-python,
  python3-all,
