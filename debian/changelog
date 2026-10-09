@@ -1,4 +1,4 @@
-django-oscar (4.2.0-1) unstable; urgency=low
+django-oscar (4.2.1-1) unstable; urgency=low
 
   * Initial Debian release.
     - python3-oscar: Django Oscar e-commerce framework library
